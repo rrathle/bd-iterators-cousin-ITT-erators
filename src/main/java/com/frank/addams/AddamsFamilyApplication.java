@@ -125,7 +125,7 @@ public class AddamsFamilyApplication {
                 int response = -1;  // initialize response to invalid value to be sure we store what user enters
 
                 System.out.println("\nYou rang??? WattaYaWannaDo? (enter number of option)\n");
-
+//cannot use an iterator with a simple array
                 for (int i = 0; i < mainMenuOptions.length; i++) {              // Loop through menu option array
                         System.out.println(i + 1 + ". " + mainMenuOptions[i]);  //     display a menu option
                 }
@@ -174,8 +174,11 @@ public class AddamsFamilyApplication {
                 String borderIcon = Emogis.TELEVISION;
 
                 System.out.println("\n"+ (borderIcon + " ").repeat(13)) ;
-                for (Person anAddams : theAddamsFamily) {
-                    personCount++;
+                //for (Person anAddams : theAddamsFamily) { //replace by iterator
+                Iterator<Person> personIterator  = theAddamsFamily.iterator(); // define an iteratory for the list
+                while(personIterator.hasNext()) { // the loop while the iteratoru ahs next
+                        Person anAddams = personIterator.next(); //instantiate an object and get the next value from Iterator
+                        personCount++;
                     System.out.printf("%s %2d. %-30s %-8s",borderIcon,personCount,anAddams.getName(),borderIcon);
                     if (personCount != theAddamsFamily.size()) {
                         System.out.println("");
@@ -199,8 +202,11 @@ public class AddamsFamilyApplication {
                 System.out.println("\nNumber of Addams' found containing " + whatTheyWant.getSearchValue() + " in name: " + listOfAddams.size());
 
                 // Loop through extracted entries and display them one at a time
-                for(Person anAddams : listOfAddams) {
-                    System.out.printf("%10d %-30s\n",anAddams.getId(),anAddams.getName());
+               // for(Person anAddams : listOfAddams) { // replace this with an iterator
+                Iterator<Person> iterator = listOfAddams.iterator();
+                while (iterator.hasNext()) {
+                        Person anAddams = iterator.next();
+                        System.out.printf("%10d %-30s\n",anAddams.getId(),anAddams.getName());
                 }
         }
         /********************************************************************************************
@@ -217,7 +223,10 @@ public class AddamsFamilyApplication {
                 listOfAddams = findAnAddamsByName(whatTheyWant.getSearchValue().strip(),whatTheyWant.isCaseSensitiveSearch());
 
                 // Loop through extracted entries, display each one and ask for new values
-                for(Person anAddams : listOfAddams) {
+                //for(Person anAddams : listOfAddams) { // Replaced by iterator
+                        Iterator<Person> iterator = listOfAddams.iterator();
+                        while (iterator.hasNext()) {
+                                Person anAddams = iterator.next();
                         // Show user the current name from extracted entries
                         System.out.println("Found: " + anAddams);
 
@@ -251,7 +260,10 @@ public class AddamsFamilyApplication {
                 aListOfAddams = findAnAddamsByName(whatTheyWant.getSearchValue().strip(), whatTheyWant.isCaseSensitiveSearch());
 
                 // Loop through extracted entries, display each one and ask if user wants to delete it
-                for (Person anAddams : aListOfAddams) {
+                //for (Person anAddams : aListOfAddams) { //Replaced by an iterator to avoid thre concurrent modification exception
+                ListIterator<Person> iterator = aListOfAddams.listIterator();
+                while (iterator.hasNext()) {
+                        Person anAddams = iterator.next();
                         // Show user the current entry from extracted entries
                         System.out.println("Found: " + anAddams);
 
@@ -261,7 +273,8 @@ public class AddamsFamilyApplication {
 
                         if (deleteResponse.startsWith("Y")) {             // If user wants to delete entry...
                                 if (theAddamsFamily.remove(anAddams)) {   //    remove it from the data structure
-                                    aListOfAddams.remove(anAddams);       //       and from the extracted entries
+                                    //aListOfAddams.remove(anAddams);       //       and from the extracted entries
+                                    iterator.remove(); //use an iterator remove instead of a list remove!!!
                                     System.out.println("----- Removal of " + anAddams.getName() + " was successful");
                                 } else {                                  // if user does not want to delete entry...
                                     System.out.println("----- Removal of " + anAddams.getName() + " failed");
@@ -378,7 +391,16 @@ public class AddamsFamilyApplication {
          ********************************************************************************************/
         public void displayAllInReverseOrder() {
                 // TODO: Add code to implement this feature
-                System.out.println("\n" + "-".repeat(60) +"\n----- Sorry, this feature has not been implemented yet -----\n"
-                                                         + "-".repeat(60) + "\n");
+
+                //definer a list iterator to start processing at the end of the list
+                // listIterator(starting-Postion-within-the-list) -default is the first element
+                ListIterator<Person> listIterator = theAddamsFamily.listIterator(theAddamsFamily.size());
+                // loop while the ListIterator has a prevoise entry
+                while(listIterator.hasPrevious()) {
+//                        retrieve the previous entry
+                        Person aPerson = listIterator.previous();
+                        System.out.println(aPerson);
+                }
+//                        process it
         }
 } // End of ApplicationProgram class
